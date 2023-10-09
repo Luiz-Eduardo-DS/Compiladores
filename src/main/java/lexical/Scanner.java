@@ -236,7 +236,7 @@ public class Scanner {
     this.reservedWords.put("DECLARACOES", TokenType.DECLARACOES);
     this.reservedWords.put("INTEIRO", TokenType.INTEIRO);
     this.reservedWords.put("REAL", TokenType.REAL);
-    this.reservedWords.put("INPUT", TokenType.INPUT);
+    this.reservedWords.put("INPUT", TokenType.LER);
     this.reservedWords.put("IF", TokenType.SE);
     this.reservedWords.put("THEN", TokenType.ENTAO);
     this.reservedWords.put("ELSE", TokenType.ELSE);

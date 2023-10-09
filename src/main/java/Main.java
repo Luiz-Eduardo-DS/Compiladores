@@ -6,7 +6,9 @@ import syntax.Parser;
 public class Main {
   public static void main(String[] args) {
     try {
-      Scanner scanner = new Scanner("entrada.txt");
+      Scanner scanner =
+          new Scanner(
+              "C:\\Users\\luizd\\IdeaProjects\\projeto_compiladores\\src\\main\\resources\\programa_checkpoint2.mc");
       Parser parser = new Parser(scanner);
       parser.E();
       System.out.println("Compilation successful!");
