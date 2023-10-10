@@ -60,49 +60,38 @@ public class Scanner {
 
       switch (this.state) {
         case 0:
-          if (this.isLetter(this.currentChar)) {
-            content += this.currentChar;
-            this.state = 1;
-          } else if (isSpace(this.currentChar)) {
-            this.state = 0;
+          if (isLetter(this.currentChar)) {
+            return processIdentifier();
           } else if (isDigit(this.currentChar)) {
-            content += this.currentChar;
-            this.state = 2;
+            return processNumber();
           } else if (isMathOperator(this.currentChar)) {
-            content += this.currentChar;
-            return new Token(TokenType.MATH_OP, content);
+            content = Character.toString(this.currentChar);
+            return new Token(TokenType.MATH_OP, content, this.linhaAnterior, this.colunaAnterior);
           } else if (isOperator(this.currentChar)) {
-            content += this.currentChar;
-            this.state = 5;
-          } else if (isLeftParenthesis(this.currentChar)) {
-            content += this.currentChar;
-            return new Token(TokenType.ABRE_PARENTESES, content);
-          } else if (isRightParenthesis(this.currentChar)) {
-            content += this.currentChar;
-            return new Token(TokenType.FECHA_PARENTESES, content);
+            return processRelationalOperator();
+          } else if (this.currentChar == '=') {
+            return processAssignment();
           } else if (this.currentChar == ';') {
-            content += this.currentChar;
-            return new Token(TokenType.PONTO_VIRGULA, content);
+            content = Character.toString(this.currentChar);
+            return new Token(TokenType.DELIM, content, this.linhaAnterior, this.colunaAnterior);
+          } else if (isLeftParenthesis(this.currentChar)) {
+            content = Character.toString(this.currentChar);
+            return new Token(
+                TokenType.ABRE_PARENTESES, content, this.linhaAnterior, this.colunaAnterior);
+          } else if (isRightParenthesis(this.currentChar)) {
+            content = Character.toString(this.currentChar);
+            return new Token(
+                TokenType.FECHA_PARENTESES, content, this.linhaAnterior, this.colunaAnterior);
           } else if (this.currentChar == ':') {
-            content += this.currentChar;
-            return new Token(TokenType.DOISPONTOS, content);
-          } else if (IsFloat(this.currentChar)) {
-            content += this.currentChar;
-            this.state = 6;
+            content = Character.toString(this.currentChar);
+            return new Token(
+                TokenType.DOISPONTOS, content, this.linhaAnterior, this.colunaAnterior);
           } else if (isCadeia(this.currentChar)) {
             return processCadeia();
           } else {
             throw new LexicalException(
-                "Invalid Character! Line "
-                    + this.linha
-                    + " Column "
-                    + this.coluna
-                    + " = "
-                    + content
-                    + this.currentChar
-                    + "");
+                "Invalid Character! Line " + this.linha + " Column " + this.coluna);
           }
-          break;
         case 1:
           if (this.isLetter(this.currentChar) || this.isDigit(this.currentChar)) {
             content += this.currentChar;
@@ -218,6 +207,25 @@ public class Scanner {
     }
   }
 
+  private Token processIdentifier() {
+    StringBuilder content = new StringBuilder();
+    while (isLetter(this.currentChar) || isDigit(this.currentChar)) {
+      content.append(this.currentChar);
+      this.currentChar = this.nextChar();
+    }
+    return new Token(
+        TokenType.IDENTIFIER, content.toString(), this.linhaAnterior, this.colunaAnterior);
+  }
+
+  private Token processNumber() {
+    StringBuilder content = new StringBuilder();
+    while (isDigit(this.currentChar)) {
+      content.append(this.currentChar);
+      this.currentChar = this.nextChar();
+    }
+    return new Token(TokenType.NUMBER, content.toString(), this.linhaAnterior, this.colunaAnterior);
+  }
+
   private char nextChar() {
     this.coluna++;
     return this.source_code[this.pos++];
@@ -310,5 +318,37 @@ public class Scanner {
     content.append('"');
     this.currentChar = this.nextChar();
     return new Token(TokenType.CADEIA, content.toString(), this.linhaAnterior, this.colunaAnterior);
+  }
+
+  private Token processRelationalOperator() {
+    StringBuilder content = new StringBuilder();
+    content.append(this.currentChar);
+    this.currentChar = this.nextChar();
+
+    switch (content.toString()) {
+      case "=":
+        return new Token(TokenType.OP_REL, "=", this.linhaAnterior, this.colunaAnterior);
+      case ">":
+        return new Token(TokenType.OP_REL, ">", this.linhaAnterior, this.colunaAnterior);
+      case ">=":
+        return new Token(TokenType.OP_REL, ">=", this.linhaAnterior, this.colunaAnterior);
+      case "<":
+        return new Token(TokenType.OP_REL, "<", this.linhaAnterior, this.colunaAnterior);
+      case "<=":
+        return new Token(TokenType.OP_REL, "<=", this.linhaAnterior, this.colunaAnterior);
+      case "==":
+        return new Token(TokenType.OP_REL, "==", this.linhaAnterior, this.colunaAnterior);
+      case "!=":
+        return new Token(TokenType.OP_REL, "!=", this.linhaAnterior, this.colunaAnterior);
+      default:
+        throw new LexicalException(
+            "Invalid Relational Operator! Line " + this.linha + " Column " + this.coluna);
+    }
+  }
+
+  private Token processAssignment() {
+    String content = Character.toString(this.currentChar);
+    this.currentChar = this.nextChar();
+    return new Token(TokenType.ASSIGNMENT, content, this.linhaAnterior, this.colunaAnterior);
   }
 }

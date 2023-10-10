@@ -1,9 +1,9 @@
 package utils;
 
 public enum TokenType {
-  DOISPONTOS,
   DECLARACOES,
   ALGORITMO,
+  VARIAVEL,
   INTEIRO,
   REAL,
   NUMBER,
@@ -15,6 +15,7 @@ public enum TokenType {
   SE,
   ENTAO,
   SENAO,
+  ENQUANTO,
   AND,
   OR,
   ABRE_PARENTESES,
@@ -25,5 +26,8 @@ public enum TokenType {
   ASSIGNMENT,
   FLOAT,
   FIM,
-  IDENTIFIER
+  IDENTIFIER,
+  DELIM,
+  OP_REL,
+  DOISPONTOS;
 }
