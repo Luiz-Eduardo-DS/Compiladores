@@ -9,14 +9,23 @@ public class Token {
   private int linha;
   private int coluna;
 
-  public Token(TokenType tipo, String valor) {
-    super();
+  public Token(TokenType tipo, String valor, int linha, int coluna) {
     this.tipo = tipo;
     this.valor = valor;
+    this.linha = linha;
+    this.coluna = coluna;
+  }
+
+  public Token(TokenType tipo, String valor) {
+    this(tipo, valor, -1, -1);
+  }
+
+  public Token(int linha, int coluna) {
+    this(null, null, linha, coluna);
   }
 
   public TokenType getTipo() {
-    return this.tipo;
+    return tipo;
   }
 
   public void setTipo(TokenType tipo) {
@@ -24,7 +33,7 @@ public class Token {
   }
 
   public String getValor() {
-    return this.valor;
+    return valor;
   }
 
   public void setValor(String valor) {
@@ -32,16 +41,15 @@ public class Token {
   }
 
   public int getLinha() {
-    return this.linha;
+    return linha;
   }
 
   public int getColuna() {
-    return this.coluna;
+    return coluna;
   }
 
   @Override
   public String toString() {
-    return "Token [tipo=" + this.tipo + ", valor=" + this.valor + "]";
+    return "Token [tipo=" + tipo + ", valor=" + valor + ", linha=" + linha + ", coluna=" + coluna + "]";
   }
-
 }

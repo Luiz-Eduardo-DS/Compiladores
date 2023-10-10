@@ -12,6 +12,7 @@ public class Parser {
 
   public Parser(Scanner scanner) {
     this.scanner = scanner;
+    this.token = this.scanner.nextToken();
   }
 
   public void E() throws Exception {
@@ -20,8 +21,7 @@ public class Parser {
   }
 
   public void El() throws Exception {
-    this.token = this.scanner.nextToken();
-    if (this.token != null) {
+    if (this.token.getTipo() == TokenType.MATH_OP) {
       OP();
       T();
       El();
@@ -29,13 +29,18 @@ public class Parser {
   }
 
   public void T() throws Exception {
-    this.token = this.scanner.nextToken();
     if (this.token.getTipo() != TokenType.IDENTIFIER && this.token.getTipo() != TokenType.NUMBER) {
       throw new ParserException(
-          "Expected IDENTIFIER or NUMBER, found " + this.token.getTipo() + ": "
-              + this.token.getValor() + " na linha: " + this.token.getLinha() + " coluna: "
+          "Expected IDENTIFIER or NUMBER, found "
+              + this.token.getTipo()
+              + ": "
+              + this.token.getValor()
+              + " na linha: "
+              + this.token.getLinha()
+              + " coluna: "
               + this.token.getColuna());
     }
+    this.token = this.scanner.nextToken();
   }
 
   public void OP() throws Exception {
@@ -43,6 +48,6 @@ public class Parser {
       throw new ParserException(
           "Expected MATH_OPERATOR, found " + this.token.getTipo() + ": " + this.token.getValor());
     }
+    this.token = this.scanner.nextToken();
   }
-
 }

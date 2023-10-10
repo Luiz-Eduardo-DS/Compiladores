@@ -25,8 +25,8 @@ public class Scanner {
   public Scanner(String filename) {
     ReservedWords();
     try {
-      String contentBuffer = new String(Files.readAllBytes(Paths.get(filename)),
-          StandardCharsets.UTF_8);
+      String contentBuffer =
+          new String(Files.readAllBytes(Paths.get(filename)), StandardCharsets.UTF_8);
       this.source_code = contentBuffer.toCharArray();
       this.pos = 0;
     } catch (IOException e) {
@@ -71,32 +71,36 @@ public class Scanner {
           } else if (isMathOperator(this.currentChar)) {
             content += this.currentChar;
             return new Token(TokenType.MATH_OP, content);
-          }else if (isOperator(this.currentChar)) {
+          } else if (isOperator(this.currentChar)) {
             content += this.currentChar;
             this.state = 5;
           } else if (isLeftParenthesis(this.currentChar)) {
             content += this.currentChar;
-            return new Token(TokenType.L_PARENTHESIS, content);
+            return new Token(TokenType.ABRE_PARENTESES, content);
           } else if (isRightParenthesis(this.currentChar)) {
             content += this.currentChar;
-            return new Token(TokenType.R_PARENTHESIS, content);
+            return new Token(TokenType.FECHA_PARENTESES, content);
           } else if (this.currentChar == ';') {
             content += this.currentChar;
-            return new Token(TokenType.SEMICOLON, content);
+            return new Token(TokenType.PONTO_VIRGULA, content);
           } else if (this.currentChar == ':') {
             content += this.currentChar;
-            return new Token(TokenType.COLON, content);
-          }  else if (IsFloat(this.currentChar)) {
+            return new Token(TokenType.DOISPONTOS, content);
+          } else if (IsFloat(this.currentChar)) {
             content += this.currentChar;
             this.state = 6;
-          }	else if (isCadeia(this.currentChar)) {
-            content += this.currentChar;
-            this.state = 8;
-          }
-          else {
-            throw new LexicalException("Invalid Character! Line " + this.linha + " Column " + this.coluna
-                + " = " + content + this.currentChar
-                + "");
+          } else if (isCadeia(this.currentChar)) {
+            return processCadeia();
+          } else {
+            throw new LexicalException(
+                "Invalid Character! Line "
+                    + this.linha
+                    + " Column "
+                    + this.coluna
+                    + " = "
+                    + content
+                    + this.currentChar
+                    + "");
           }
           break;
         case 1:
@@ -113,35 +117,47 @@ public class Scanner {
           if (isDigit(this.currentChar)) {
             content += this.currentChar;
             this.state = 2;
-          }  else if (IsFloat(this.currentChar)) {
+          } else if (IsFloat(this.currentChar)) {
             content += this.currentChar;
             this.state = 6;
-          } else if (isSpace(this.currentChar) || isOperator(this.currentChar) || isMathOperator(
-              this.currentChar) || isLeftParenthesis(
-              this.currentChar) || isRightParenthesis(
-              this.currentChar)) {
+          } else if (isSpace(this.currentChar)
+              || isOperator(this.currentChar)
+              || isMathOperator(this.currentChar)
+              || isLeftParenthesis(this.currentChar)
+              || isRightParenthesis(this.currentChar)) {
             this.back();
             return new Token(TokenType.NUMBER, content);
           } else {
-            throw new LexicalException("Number Malformed! Line " + this.linha + " Column " + this.coluna
-                + " = " + content + this.currentChar
-                + "");
+            throw new LexicalException(
+                "Number Malformed! Line "
+                    + this.linha
+                    + " Column "
+                    + this.coluna
+                    + " = "
+                    + content
+                    + this.currentChar
+                    + "");
           }
           break;
         case 5:
-          if (this.currentChar == '=') {							// para os casos de == | != | <= | >=
+          if (this.currentChar == '=') {
             content += this.currentChar;
             return new Token(TokenType.REL_OP, content);
-          } else if(this.previusChar == '=') {						// para os casos de =
+          } else if (this.previusChar == '=') {
             this.back();
             return new Token(TokenType.ASSIGNMENT, content);
-          } else if(this.previusChar != '!') {						// para os casos de < | >
+          } else if (this.previusChar != '!') {
             this.back();
             return new Token(TokenType.REL_OP, content);
-          }
-          else {
+          } else {
             throw new RuntimeException(
-                "Invalid Relacional Operator ! Line " + this.linha + " Column " + this.coluna + " = " + content + this.currentChar
+                "Invalid Relacional Operator ! Line "
+                    + this.linha
+                    + " Column "
+                    + this.coluna
+                    + " = "
+                    + content
+                    + this.currentChar
                     + "");
           }
         case 6:
@@ -149,8 +165,15 @@ public class Scanner {
             content += this.currentChar;
             this.state = 7;
           } else {
-            throw new LexicalException("Float Malformed! Line " + this.linha + " Column " + this.coluna + " = " + content + this.currentChar
-                + "");
+            throw new LexicalException(
+                "Float Malformed! Line "
+                    + this.linha
+                    + " Column "
+                    + this.coluna
+                    + " = "
+                    + content
+                    + this.currentChar
+                    + "");
           }
           break;
         case 7:
@@ -158,8 +181,15 @@ public class Scanner {
             content += this.currentChar;
             this.state = 7;
           } else if (isLetter(this.currentChar) || IsFloat(this.currentChar)) {
-            throw new LexicalException("Float Malformed! Line " + this.linha + " Column " + this.coluna + " = " + content + this.currentChar
-                + "");
+            throw new LexicalException(
+                "Float Malformed! Line "
+                    + this.linha
+                    + " Column "
+                    + this.coluna
+                    + " = "
+                    + content
+                    + this.currentChar
+                    + "");
           } else {
             this.back();
             return new Token(TokenType.FLOAT, content);
@@ -171,15 +201,20 @@ public class Scanner {
             content += this.currentChar;
             return new Token(TokenType.CADEIA, content);
           } else if (isEOF()) {
-            throw new LexicalException("String Malformed! Line " + this.linha + " Column " + this.coluna
-                + " = " + content + this.currentChar
-                + "");
+            throw new LexicalException(
+                "String Malformed! Line "
+                    + this.linha
+                    + " Column "
+                    + this.coluna
+                    + " = "
+                    + content
+                    + this.currentChar
+                    + "");
           } else {
             content += this.currentChar;
             this.state = 8;
           }
       }
-
     }
   }
 
@@ -239,14 +274,13 @@ public class Scanner {
     this.reservedWords.put("INPUT", TokenType.LER);
     this.reservedWords.put("IF", TokenType.SE);
     this.reservedWords.put("THEN", TokenType.ENTAO);
-    this.reservedWords.put("ELSE", TokenType.ELSE);
+    this.reservedWords.put("ELSE", TokenType.SENAO);
     this.reservedWords.put("ASSIGN", TokenType.ASSIGN);
     this.reservedWords.put("TO", TokenType.TO);
     this.reservedWords.put("AND", TokenType.AND);
     this.reservedWords.put("OR", TokenType.OR);
-    this.reservedWords.put("PRINT", TokenType.PRINT);
     this.reservedWords.put("WHILE", TokenType.IMPRIMIR);
-    this.reservedWords.put("END_ALGORITMO", TokenType.END_ALGORITMO);
+    this.reservedWords.put("FIM", TokenType.FIM);
   }
 
   private boolean isComment(char c) {
@@ -255,5 +289,26 @@ public class Scanner {
 
   private boolean isCadeia(char c) {
     return c == '"';
+  }
+
+  private Token processCadeia() {
+    StringBuilder content = new StringBuilder();
+    content.append('"');
+    while (this.currentChar != '"') {
+      content.append(this.currentChar);
+      this.currentChar = this.nextChar();
+      if (isEOF()) {
+        throw new LexicalException(
+            "String Malformed! Line "
+                + this.linhaAnterior
+                + " Column "
+                + this.colunaAnterior
+                + " = "
+                + content.toString());
+      }
+    }
+    content.append('"');
+    this.currentChar = this.nextChar();
+    return new Token(TokenType.CADEIA, content.toString(), this.linhaAnterior, this.colunaAnterior);
   }
 }
