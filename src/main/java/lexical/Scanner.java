@@ -65,15 +65,15 @@ public class Scanner {
           } else if (isDigit(this.currentChar)) {
             return processNumber();
           } else if (isMathOperator(this.currentChar)) {
-            content = Character.toString(this.currentChar);
-            return new Token(TokenType.MATH_OP, content, this.linhaAnterior, this.colunaAnterior);
+            return processMathOperator();
           } else if (isOperator(this.currentChar)) {
             return processRelationalOperator();
           } else if (this.currentChar == '=') {
             return processAssignment();
           } else if (this.currentChar == ';') {
-            content = Character.toString(this.currentChar);
-            return new Token(TokenType.DELIM, content, this.linhaAnterior, this.colunaAnterior);
+            return processDelimiter();
+          } else if (this.currentChar == '<' || this.currentChar == '>') {
+            return processRelationalOperator();
           } else if (isLeftParenthesis(this.currentChar)) {
             content = Character.toString(this.currentChar);
             return new Token(
@@ -213,8 +213,11 @@ public class Scanner {
       content.append(this.currentChar);
       this.currentChar = this.nextChar();
     }
-    return new Token(
-        TokenType.IDENTIFIER, content.toString(), this.linhaAnterior, this.colunaAnterior);
+    TokenType tokenType = TokenType.IDENTIFIER;
+    if (reservedWords.containsKey(content.toString())) {
+      tokenType = reservedWords.get(content.toString());
+    }
+    return new Token(tokenType, content.toString(), this.linhaAnterior, this.colunaAnterior);
   }
 
   private Token processNumber() {
@@ -325,30 +328,29 @@ public class Scanner {
     content.append(this.currentChar);
     this.currentChar = this.nextChar();
 
-    switch (content.toString()) {
-      case "=":
-        return new Token(TokenType.OP_REL, "=", this.linhaAnterior, this.colunaAnterior);
-      case ">":
-        return new Token(TokenType.OP_REL, ">", this.linhaAnterior, this.colunaAnterior);
-      case ">=":
-        return new Token(TokenType.OP_REL, ">=", this.linhaAnterior, this.colunaAnterior);
-      case "<":
-        return new Token(TokenType.OP_REL, "<", this.linhaAnterior, this.colunaAnterior);
-      case "<=":
-        return new Token(TokenType.OP_REL, "<=", this.linhaAnterior, this.colunaAnterior);
-      case "==":
-        return new Token(TokenType.OP_REL, "==", this.linhaAnterior, this.colunaAnterior);
-      case "!=":
-        return new Token(TokenType.OP_REL, "!=", this.linhaAnterior, this.colunaAnterior);
-      default:
-        throw new LexicalException(
-            "Invalid Relational Operator! Line " + this.linha + " Column " + this.coluna);
+    if (this.currentChar == '=') {
+      content.append(this.currentChar);
+      this.currentChar = this.nextChar();
     }
+
+    return new Token(TokenType.REL_OP, content.toString(), this.linhaAnterior, this.colunaAnterior);
   }
 
   private Token processAssignment() {
     String content = Character.toString(this.currentChar);
     this.currentChar = this.nextChar();
     return new Token(TokenType.ASSIGNMENT, content, this.linhaAnterior, this.colunaAnterior);
+  }
+
+  private Token processMathOperator() {
+    String content = Character.toString(this.currentChar);
+    this.currentChar = this.nextChar();
+    return new Token(TokenType.MATH_OP, content, this.linhaAnterior, this.colunaAnterior);
+  }
+
+  private Token processDelimiter() {
+    String content = Character.toString(this.currentChar);
+    this.currentChar = this.nextChar();
+    return new Token(TokenType.DELIM, content, this.linhaAnterior, this.colunaAnterior);
   }
 }

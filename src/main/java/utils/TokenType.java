@@ -3,7 +3,6 @@ package utils;
 public enum TokenType {
   DECLARACOES,
   ALGORITMO,
-  VARIAVEL,
   INTEIRO,
   REAL,
   NUMBER,
@@ -15,12 +14,10 @@ public enum TokenType {
   SE,
   ENTAO,
   SENAO,
-  ENQUANTO,
   AND,
   OR,
   ABRE_PARENTESES,
   FECHA_PARENTESES,
-  PONTO_VIRGULA,
   MATH_OP,
   REL_OP,
   ASSIGNMENT,
@@ -29,5 +26,8 @@ public enum TokenType {
   IDENTIFIER,
   DELIM,
   OP_REL,
-  DOISPONTOS;
+  DOISPONTOS,
+  VARIAVEL,
+  ENQUANTO,
+  INICIO;
 }
